@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,9 +16,13 @@ use App\Http\Controllers\UserController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::prefix('/user')->name('user.')->group(function(){
+    Route::post('/create-user', [ UserController::class, 'add' ])
+    ->name('create-user');
 
-Route::get('user/{id}', [UserController::class, 'getUser']);
-Route::post('user/create-user', [UserController::class, 'add']);
+    Route::post('/register', [AuthController::class, 'register' ])
+    ->name('register');
+
+    Route::post('/login', [AuthController::class, 'login'])
+    ->name('login');
+});

@@ -7,13 +7,6 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-    public function getUser ($id){
-        $user = User::find($id);
-
-        return response()->json([
-            'user' => $user,
-        ]);
-    }
 
     public function add (Request $request) {
 
