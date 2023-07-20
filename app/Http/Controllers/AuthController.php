@@ -20,7 +20,8 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Registration successful', 
             'user' => $user
-        ]);
+        ], 
+        201 );
     }
 
     public function login(Request $request)
@@ -39,6 +40,7 @@ class AuthController extends Controller
         return response()->json([ 
             'message' => 'Logintion successful', 
             'user' => $user 
-        ]);
+        ], 
+        201 );
     }
 }
