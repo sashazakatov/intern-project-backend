@@ -30,7 +30,7 @@ class AuthController extends Controller
         ->first();
 
         if(!$user){
-            return response()->json(['message' => 'Invalid credentials']);
+            return response()->json([ 'message' => 'Bad request' ], 400);
         }
         
         return response()->json([ 'user' => $user ]);
