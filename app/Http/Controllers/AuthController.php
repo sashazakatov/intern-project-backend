@@ -17,7 +17,10 @@ class AuthController extends Controller
             'password' => $request->password,
         ]);
 
-        return response()->json(['message' => 'Registration successful', 'user' => $user]);
+        return response()->json([
+            'message' => 'Registration successful', 
+            'user' => $user
+        ]);
     }
 
     public function login(Request $request)
@@ -33,6 +36,9 @@ class AuthController extends Controller
             return response()->json([ 'message' => 'Bad request' ], 400);
         }
         
-        return response()->json([ 'user' => $user ]);
+        return response()->json([ 
+            'message' => 'Logintion successful', 
+            'user' => $user 
+        ]);
     }
 }
