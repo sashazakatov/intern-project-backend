@@ -40,7 +40,6 @@ class AuthController extends Controller
         return response()->json([ 
             'message' => 'Logintion successful', 
             'user' => $user 
-        ], 
-        201 );
+        ]);
     }
 }
