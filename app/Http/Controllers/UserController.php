@@ -26,6 +26,7 @@ class UserController extends Controller
         return response()->json([
             'message' => 'Adding successful', 
             'user' => $user,
-        ]);
+        ], 
+        201 );
     }
 }
