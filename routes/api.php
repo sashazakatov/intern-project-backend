@@ -26,3 +26,17 @@ Route::prefix('/user')->name('user.')->group(function(){
     Route::post('/login', [AuthController::class, 'login'])
     ->name('login');
 });
+
+Route::group(function () {
+    Route::post('/tokens/create', function (Request $request) {
+        $token = $request->user()->createToken($request->token_name);
+
+        return ['token' => $token->plainTextToken];
+    });
+});
+
+Route::post('/tokens/create', function (Request $request) {
+    $token = $request->user()->createToken($request->token_name);
+
+    return ['token' => $token->plainTextToken];
+});
