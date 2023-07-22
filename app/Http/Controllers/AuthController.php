@@ -3,12 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
 class AuthController extends Controller
 {
     public function register(Request $request)
     {
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            return response()->json(['message' => 'Already exists'], 401);
+        }
+
         $user = User::create([
             'name' => $request->name,
             'surname' => $request->surname,
@@ -30,20 +37,20 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-
         $credentials = $request->only('email', 'password');
 
-        $user = User::where('email', $credentials['email'])
-        ->where('password', $credentials['password'])
-        ->first();
-
-        if(!$user){
-            return response()->json([ 'message' => 'Bad request' ], 400);
+        if (!Auth::attempt($credentials)) {            
+            return response()->json(['message' => 'Unauthenticated'], 401);
         }
-        
+
+        $user = Auth::user();
+        $accessToken = $user->createToken('authToken')->accessToken;
+        $refreshToken = $user->createToken('authToken', [''])->accessToken;
+
         return response()->json([ 
-            'message' => 'Logintion successful', 
-            'user' => $user 
+            'message' => 'Login successful', 
+            'accessToken' => $accessToken,
+            'refreshToken' => $refreshToken
         ]);
     }
 }
