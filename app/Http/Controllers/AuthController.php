@@ -13,8 +13,12 @@ class AuthController extends Controller
             'name' => $request->name,
             'surname' => $request->surname,
             'email' => $request->email,
-            'role' => 'user',
+            'role' => $request->role,
             'password' => $request->password,
+            'country' => $request->country,
+            'city' => $request->city,
+            'address' => $request->address,
+            'phone_number' => $request->phone_number,
         ]);
 
         return response()->json([
