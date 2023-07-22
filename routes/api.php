@@ -16,7 +16,8 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-Route::prefix('/user')->name('user.')->group(function(){
+Route::prefix('/users')->name('users.')->group(function(){
+
     Route::post('/create-user', [ UserController::class, 'add' ])
     ->name('create-user');
 
