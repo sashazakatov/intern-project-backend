@@ -18,12 +18,15 @@ use App\Http\Controllers\AuthController;
 
 Route::prefix('/users')->name('users.')->group(function(){
 
+    //создания пользователя
     Route::post('/create-user', [ UserController::class, 'add' ])
     ->name('create-user');
 
+    //регистрация пользователя
     Route::post('/register', [AuthController::class, 'register' ])
     ->name('register');
 
+    //Аутентификация пользователя
     Route::post('/login', [AuthController::class, 'login'])
     ->name('login');
 });
