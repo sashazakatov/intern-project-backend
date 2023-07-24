@@ -18,7 +18,7 @@ class UserController extends Controller
         $authenticatedUser = Auth::user();
 
         if ($authenticatedUser->role !== 'admin') {
-            return response()->json(['message' => 'У вас нет прав для выполнения этого действия.'], 403);
+            return response()->json(['message' => 'You do not have the right to perform this action'], 403);
         }
 
         $email = $request->only('email');
