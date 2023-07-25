@@ -26,6 +26,12 @@ Route::prefix('/users')->name('users.')->group(function(){
     Route::delete('delete-user', [ UserController::class, 'delete' ])
     ->name('delete-user');
 
+    //обновление пользователя
+    Route::put('update-user-info', [ UserController::class, 'updateUserInfo' ]);
+
+    //возрошает информацию о пользователе
+    Route::get('/user-info', [ UserController::class, 'getUserInfo' ]);
+
     //регистрация пользователя
     Route::post('/register', [AuthController::class, 'register' ])
     ->name('register');

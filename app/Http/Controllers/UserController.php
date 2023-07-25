@@ -84,4 +84,30 @@ class UserController extends Controller
 
         return response()->json(['message' => 'User deleted successfully']);
     }
+
+    public function updateUserInfo(Request $request){
+        $authenticatedUser = Auth::user();
+
+        // Проверяем, что пользователь редактирует свой профиль
+        if ($authenticatedUser->id !== $request->user()->id) {
+            return response()->json(['message' => 'You do not have permission to edit this profile'], 403);
+        }
+
+        // Обновляем данные пользователя
+        $authenticatedUser->update($request->all());
+
+        return response()->json([
+            'message' => 'Data updated successfully',
+            'user' => $authenticatedUser,
+        ]);
+    }
+
+    public function getUserInfo(Request $request)
+    {
+        $authenticatedUser = Auth::user();
+
+        // dd($authenticatedUser);
+
+        return response()->json(['user' => $authenticatedUser]);
+    }
 }
