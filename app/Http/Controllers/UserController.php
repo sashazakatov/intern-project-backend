@@ -54,4 +54,34 @@ class UserController extends Controller
 
         return response()->json(['user' => $user], 201);
     }
+
+    public function delete(Request $request){
+        $authenticatedUser = Auth::user();
+
+        if ($authenticatedUser->role !== 'admin' && $authenticatedUser->role !== 'regional_admin') {
+            return response()->json(['message' => 'You do not have permission to perform this action'], 403);
+        }
+
+        $user = User::find($request->id);
+
+        if(!$user){
+            return response()->json(['message' => 'User is not found'], 404);
+        }
+
+        if ($authenticatedUser->role === 'regional_admin') {
+            // Проверяем, если новый пользователь принадлежит к той же стране, что и региональный админ
+            if ($authenticatedUser->country !== $user->country) {
+                return response()->json(['message' => 'You can only add users in your country'], 403);
+            }
+
+            // Проверяем, если новый пользователь принадлежит к тому же городу, что и региональный админ
+            if ($authenticatedUser->city !== $user->city) {
+                return response()->json(['message' => 'You can only add users in your city'], 403);
+            }
+        }
+
+        $user->delete();
+
+        return response()->json(['message' => 'User deleted successfully']);
+    }
 }
