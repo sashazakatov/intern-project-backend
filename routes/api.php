@@ -22,6 +22,7 @@ Route::prefix('/users')->name('users.')->group(function(){
     Route::post('/create-user', [ UserController::class, 'add' ])
     ->name('create-user');
 
+    //удаления пользователя
     Route::delete('delete-user', [ UserController::class, 'delete' ])
     ->name('delete-user');
 
