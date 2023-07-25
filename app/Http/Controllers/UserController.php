@@ -106,8 +106,6 @@ class UserController extends Controller
     {
         $authenticatedUser = Auth::user();
 
-        // dd($authenticatedUser);
-
         return response()->json(['user' => $authenticatedUser]);
     }
 }
