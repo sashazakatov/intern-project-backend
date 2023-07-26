@@ -28,11 +28,7 @@ class AuthController extends Controller
             'phone_number' => $request->phone_number,
         ]);
 
-        return response()->json([
-            'message' => 'Registration successful', 
-            'user' => $user
-        ], 
-        201 );
+        return response()->json( [ 'message' => 'Registration successful' ], 201 );
     }
 
     public function login(Request $request)
