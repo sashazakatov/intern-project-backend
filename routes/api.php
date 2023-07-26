@@ -20,6 +20,7 @@ Route::prefix('/users')->name('users.')->group(function(){
 
     //создания пользователя
     Route::post('/create-user', [ UserController::class, 'add' ])
+    ->middleware([ 'CheckUserRole' ])
     ->name('create-user');
 
     //удаления пользователя
