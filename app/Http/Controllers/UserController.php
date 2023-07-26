@@ -17,8 +17,20 @@ class UserController extends Controller
     {
         $authenticatedUser = Auth::user();
 
-        if ($authenticatedUser->role !== 'admin') {
-            return response()->json(['message' => 'You do not have the right to perform this action'], 403);
+        if ($authenticatedUser->role !== 'admin' && $authenticatedUser->role !== 'regional_admin') {
+            return response()->json(['message' => 'You do not have permission to perform this action'], 403);
+        }
+
+        if ($authenticatedUser->role === 'regional_admin') {
+            // Проверяем, если новый пользователь принадлежит к той же стране, что и региональный админ
+            if ($authenticatedUser->country !== $request->country) {
+                return response()->json(['message' => 'You can only add users in your country'], 403);
+            }
+
+            // Проверяем, если новый пользователь принадлежит к тому же городу, что и региональный админ
+            if ($authenticatedUser->city !== $request->city) {
+                return response()->json(['message' => 'You can only add users in your city'], 403);
+            }
         }
 
         $email = $request->only('email');
