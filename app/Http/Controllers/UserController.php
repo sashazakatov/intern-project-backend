@@ -11,27 +11,12 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api');
+        // $this->middleware('CheckUserRole');
     }
 
     public function add(Request $request)
     {
         $authenticatedUser = Auth::user();
-
-        if ($authenticatedUser->role !== 'admin' && $authenticatedUser->role !== 'regional_admin') {
-            return response()->json(['message' => 'You do not have permission to perform this action'], 403);
-        }
-
-        if ($authenticatedUser->role === 'regional_admin') {
-            // Проверяем, если новый пользователь принадлежит к той же стране, что и региональный админ
-            if ($authenticatedUser->country !== $request->country) {
-                return response()->json(['message' => 'You can only add users in your country'], 403);
-            }
-
-            // Проверяем, если новый пользователь принадлежит к тому же городу, что и региональный админ
-            if ($authenticatedUser->city !== $request->city) {
-                return response()->json(['message' => 'You can only add users in your city'], 403);
-            }
-        }
 
         $email = $request->only('email');
         $user = User::where('email', $email)->first();
@@ -85,28 +70,41 @@ class UserController extends Controller
         return response()->json(['message' => 'User deleted successfully']);
     }
 
-    public function updateUserInfo(Request $request){
-        $authenticatedUser = Auth::user();
+    public function updateUserInfo(Request $request)
+    {
+        $currentUser = Auth::user();
+        $user = User::find($request->id);
+        $isUsedEmail = User::where('email', $request->email)->first();
 
-        // Проверяем, что пользователь редактирует свой профиль
-        if ($authenticatedUser->id !== $request->user()->id) {
-            return response()->json(['message' => 'You do not have permission to edit this profile'], 403);
+        if (!$user) {
+            return response()->json(['error' => 'User is not found'], 404);
         }
-
-        $user = User::where('email', $request->email)->first();
-        if($user){
+        if($isUsedEmail){
             return response()->json([
                 'message' => 'This email is already in use',
             ]);
         }
 
-        // Обновляем данные пользователя
-        $authenticatedUser->update($request->all());
+        if ($currentUser->isAdmin()) {
+            $data = $request->only(['name', 'surname', 'email', 'role', 'password', 'country', 'city', 'address', 'phone_number']);
+            $user->update($data);
 
-        return response()->json([
-            'message' => 'Data updated successfully',
-            'user' => $authenticatedUser,
-        ]);
+            return response()->json(["message" => "Data updated successfully", "user" => $user]);
+        }
+        if ($currentUser->isRegionalAdmin() && $currentUser->city === $user->city && $currentUser->country === $user->coutry) {
+            $data = $request->only(['name', 'password', 'address', 'phone', 'avatar']);
+            $user->update($data);
+
+            return response()->json(["message" => "Data updated successfully", "user" => $user]);
+        }
+        if (($currentUser->isDeviceOwner() || $currentUser->isCustomer()) && $currentUser->id === $user->id) {
+            $data = $request->only(['password', 'address', 'phone', 'avatar']);
+            $user->update($data);
+            
+            return response()->json(["message" => "Data updated successfully", "user" => $user]);
+        }
+
+        return response()->json(['message' => 'You do not have permission to edit this user'], 403);
     }
 
     public function getUserInfo(Request $request)
