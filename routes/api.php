@@ -30,6 +30,10 @@ Route::prefix('/users')->name('users.')->group(function(){
     //обновление пользователя
     Route::put('update-user-info', [ UserController::class, 'updateUserInfo' ]);
 
+    //обновление аватарки
+    Route::put('/update-avatar', [UserController::class, 'updateAvatar'])
+    ->name('update-avatar');
+
     //возрошает информацию о пользователе
     Route::get('/user-info', [ UserController::class, 'getUserInfo' ]);
 
@@ -37,7 +41,7 @@ Route::prefix('/users')->name('users.')->group(function(){
     Route::post('/register', [AuthController::class, 'register' ])
     ->name('register');
 
-    //Аутентификация пользователя
+    // Аутентификация пользователя
     Route::post('/login', [AuthController::class, 'login'])
     ->name('login');
 });

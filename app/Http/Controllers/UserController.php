@@ -113,4 +113,8 @@ class UserController extends Controller
 
         return response()->json(['user' => $authenticatedUser]);
     }
+
+    public function updateAvatar(Request $request){
+        return response() -> json([ 'message' => 'update avatar' ]);
+    }
 }
