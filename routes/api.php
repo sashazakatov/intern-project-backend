@@ -31,7 +31,7 @@ Route::prefix('/users')->name('users.')->group(function(){
     Route::put('update-user-info', [ UserController::class, 'updateUserInfo' ]);
 
     //обновление аватарки
-    Route::put('/update-avatar', [UserController::class, 'updateAvatar'])
+    Route::post('/update-avatar', [UserController::class, 'updateAvatar'])
     ->name('update-avatar');
 
     //возрошает информацию о пользователе

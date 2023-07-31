@@ -11,7 +11,6 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api');
-        // $this->middleware('CheckUserRole');
     }
 
     public function add(Request $request)
@@ -54,12 +53,11 @@ class UserController extends Controller
         }
 
         if ($authenticatedUser->role === 'regional_admin') {
-            // Проверяем, если новый пользователь принадлежит к той же стране, что и региональный админ
+
             if ($authenticatedUser->country !== $user->country) {
                 return response()->json(['message' => 'You can only add users in your country'], 403);
             }
 
-            // Проверяем, если новый пользователь принадлежит к тому же городу, что и региональный админ
             if ($authenticatedUser->city !== $user->city) {
                 return response()->json(['message' => 'You can only add users in your city'], 403);
             }
@@ -114,7 +112,27 @@ class UserController extends Controller
         return response()->json(['user' => $authenticatedUser]);
     }
 
-    public function updateAvatar(Request $request){
-        return response() -> json([ 'message' => 'update avatar' ]);
+    public function updateAvatar(Request $request)
+    {
+        $user = $request->user();
+        
+        // Проверяем, отправлен ли файл
+        if ($request->hasFile('avatar')) {
+            $file = $request->file('avatar');
+            
+            // Сохраняем файл на сервере
+            $filePath = $file->store('avatars', 'public');
+            
+            // Генерируем URL аватара на основе сохраненного пути
+            $avatarUrl = asset('storage/' . $filePath);
+            
+            // Обновляем ссылку на аватар в базе данных
+            $user->avatar = $avatarUrl;
+            $user->save();
+
+            return response()->json(['message' => 'Avatar uploaded successfully']);
+        }
+        
+        return response()->json(['message' => 'File not found'], 400);
     }
 }
