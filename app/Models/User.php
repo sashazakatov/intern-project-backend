@@ -23,6 +23,10 @@ class User extends Authenticatable
         'phone_number',
     ];
 
+    protected $attributes = [
+        'avatar' => 'http://intern-project-backend/storage/default_avatar/default_avatar.png',
+    ];
+
     protected $table = 'users';
 
     protected $hidden = [
