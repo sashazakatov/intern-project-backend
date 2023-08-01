@@ -115,18 +115,14 @@ class UserController extends Controller
     public function updateAvatar(Request $request)
     {
         $user = $request->user();
-        
-        // Проверяем, отправлен ли файл
+
         if ($request->hasFile('avatar')) {
             $file = $request->file('avatar');
-            
-            // Сохраняем файл на сервере
+
             $filePath = $file->store('avatars', 'public');
-            
-            // Генерируем URL аватара на основе сохраненного пути
+
             $avatarUrl = asset('storage/' . $filePath);
-            
-            // Обновляем ссылку на аватар в базе данных
+
             $user->avatar = $avatarUrl;
             $user->save();
 
