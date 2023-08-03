@@ -45,6 +45,10 @@ Route::prefix('/users')->name('users.')->group(function(){
     // Аутентификация пользователя
     Route::post('/login', [AuthController::class, 'login'])
     ->name('login');
+
+    // Проверки емейла на уникальность
+    Route::get('/check-email', [UserController::class, 'checkEmail'])
+    ->name('check.email');
 });
 
 //возвращает аватарки

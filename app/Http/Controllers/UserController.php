@@ -131,4 +131,18 @@ class UserController extends Controller
         
         return response()->json(['message' => 'File not found'], 400);
     }
+
+    public function checkEmail(Request $request){
+        $email = $request->email;
+        if(!$email){
+            return response()->json(['message' => 'Email is required'], 400);
+        }
+
+        $user = User::where('email', $email)->first();
+        if(!$user){
+            return response()->json(['isExists' => false]);
+        }
+
+        return response()->json([ 'isExists' => true ]);
+    }
 }
