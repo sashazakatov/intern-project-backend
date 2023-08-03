@@ -19,6 +19,10 @@ use App\Http\Controllers\AvatarController;
 
 Route::prefix('/users')->name('users.')->group(function(){
 
+    //возрошает пользователей
+    Route::get('/', [UserController::class, 'getUser'])
+    ->name('getUser');
+
     //создания пользователя
     Route::post('/create-user', [ UserController::class, 'add' ])
     ->middleware([ 'CheckUserRole' ])

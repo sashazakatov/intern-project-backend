@@ -131,4 +131,39 @@ class UserController extends Controller
         
         return response()->json(['message' => 'File not found'], 400);
     }
+
+    public function checkEmail(Request $request){
+        $email = $request->email;
+        if(!$email){
+            return response()->json(['message' => 'Email is required'], 400);
+        }
+
+        $user = User::where('email', $email)->first();
+        if(!$user){
+            return response()->json(['isExists' => false]);
+        }
+
+        return response()->json([ 'isExists' => true ]);
+    }
+
+    public function getUser()
+    {
+        $user = Auth::user();
+
+        if ($user->role === 'admin') {
+            $users = User::where('id', '!=', $user->id)
+            ->get();
+
+            return response()->json(['users' => $users], 200);
+        }
+        if ($user->role === 'regional_admin') {
+            $users = User::where('id', '!=', $user->id)
+            ->where('city', $user->city)
+            ->get();
+
+            return response()->json(['users' => $users], 200);
+        }
+
+        return response()->json(['message' => 'Access denied'], 403);
+    }
 }
