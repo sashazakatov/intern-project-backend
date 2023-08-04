@@ -17,7 +17,7 @@ use App\Http\Controllers\AvatarController;
 |
 */
 
-Route::prefix('/users')->name('users.')->group(function(){
+Route::prefix('/users')->middleware([ 'auth:api' ])->name('users.')->group(function(){
 
     //возрошает пользователей
     Route::get('/', [UserController::class, 'getUser'])
@@ -49,9 +49,11 @@ Route::prefix('/users')->name('users.')->group(function(){
     // Аутентификация пользователя
     Route::post('/login', [AuthController::class, 'login'])
     ->name('login');
+});
 
+Route::prefix('users/check-email')->name('users.')->group(function(){
     // Проверки емейла на уникальность
-    Route::post('/check-email', [UserController::class, 'checkEmail'])
+    Route::post('/', [UserController::class, 'checkEmail'])
     ->name('check.email');
 });
 
