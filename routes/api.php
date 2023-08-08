@@ -51,7 +51,7 @@ Route::prefix('users/check-email')->name('users.')->group(function(){
 Route::get('/standard-avatars', [AvatarController::class, 'getStandardAvatars']);
 
 //Эндпоинты дивайсов
-Route::prefix('/devices')->name('devices.')->group(function(){
+Route::prefix('/devices')->middleware([ 'auth:api' ])->name('devices.')->group(function(){
 
     //Создание дивайса
     Route::post('/create', [DeviceController::class, 'create']);
