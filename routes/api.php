@@ -17,7 +17,7 @@ use App\Http\Controllers\AvatarController;
 |
 */
 
-Route::prefix('/users')->middleware([ 'auth:api' ])->name('users.')->group(function(){
+Route::prefix('/users')->name('users.')->group(function(){
 
     //возрошает пользователей
     Route::get('/', [UserController::class, 'getUser'])
@@ -30,17 +30,21 @@ Route::prefix('/users')->middleware([ 'auth:api' ])->name('users.')->group(funct
 
     //удаления пользователя
     Route::delete('delete-user', [ UserController::class, 'delete' ])
+    ->middleware([ 'auth:api' ])
     ->name('delete-user');
 
     //обновление пользователя
-    Route::put('update-user-info', [ UserController::class, 'updateUserInfo' ]);
+    Route::put('update-user-info', [ UserController::class, 'updateUserInfo' ])
+    ->middleware([ 'auth:api' ]);
 
     //обновление аватарки
     Route::post('/update-avatar', [UserController::class, 'updateAvatar'])
+    ->middleware([ 'auth:api' ])
     ->name('update-avatar');
 
     //возрошает информацию о пользователе
-    Route::get('/user-info', [ UserController::class, 'getUserInfo' ]);
+    Route::get('/user-info', [ UserController::class, 'getUserInfo' ])
+    ->middleware([ 'auth:api' ]);
 
     //регистрация пользователя
     Route::post('/register', [AuthController::class, 'register' ])
