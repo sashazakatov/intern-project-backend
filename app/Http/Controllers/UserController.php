@@ -6,24 +6,13 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\UserCreateRequest;
-
+use App\Http\Requests\UserUpdateRequest;
 
 class UserController extends Controller
 {
 
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function add(UserCreateRequest $request)
     {
-        $email = $request->only('email');
-        $user = User::where('email', $email)->first();
-
-        if ($user) {
-            return response()->json(['message' => 'Already exists'], 401);
-        }
 
         $user = User::create([
             'name' => $request->name,
@@ -40,7 +29,7 @@ class UserController extends Controller
         return response()->json(['user' => $user], 201);
     }
 
-    public function delete(Request $request){
+    public function delete(UserIdRequest $request){
 
         $user = User::find($request->id);
 
@@ -48,35 +37,19 @@ class UserController extends Controller
             return response()->json(['message' => 'User is not found'], 404);
         }
 
-        // if ($authenticatedUser->role === 'regional_admin') {
-
-        //     if ($authenticatedUser->country !== $user->country) {
-        //         return response()->json(['message' => 'You can only add users in your country'], 403);
-        //     }
-
-        //     if ($authenticatedUser->city !== $user->city) {
-        //         return response()->json(['message' => 'You can only add users in your city'], 403);
-        //     }
-        // }
-
         $user->delete();
 
         return response()->json(['message' => 'User deleted successfully']);
     }
 
-    public function updateUserInfo(Request $request)
+    public function updateUserInfo(UserUpdateRequest $request)
     {
         $currentUser = Auth::user();
+
         $user = User::find($request->id);
-        $isUsedEmail = User::where('email', $request->email)->first();
 
         if (!$user) {
-            return response()->json(['error' => 'User is not found'], 404);
-        }
-        if($isUsedEmail){
-            return response()->json([
-                'message' => 'This email is already in use',
-            ]);
+            return response()->json(['message' => 'User is not found'], 404);
         }
 
         if ($currentUser->isAdmin()) {
@@ -85,20 +58,21 @@ class UserController extends Controller
 
             return response()->json(["message" => "Data updated successfully", "user" => $user]);
         }
-        if ($currentUser->isRegionalAdmin() && $currentUser->city === $user->city && $currentUser->country === $user->coutry) {
-            $data = $request->only(['name', 'password', 'address', 'phone', 'avatar']);
+        if ($currentUser->isRegionalAdmin() && $currentUser->city === $user->city && $currentUser->country === $user->country) {
+
+            $data = $request->only(['name', 'password', 'address', 'phone_number', 'avatar']);
             $user->update($data);
 
             return response()->json(["message" => "Data updated successfully", "user" => $user]);
         }
         if (($currentUser->isDeviceOwner() || $currentUser->isCustomer()) && $currentUser->id === $user->id) {
-            $data = $request->only(['password', 'address', 'phone', 'avatar']);
+            $data = $request->only(['password', 'address', 'phone_number', 'avatar']);
             $user->update($data);
             
             return response()->json(["message" => "Data updated successfully", "user" => $user]);
         }
 
-        return response()->json(['message' => 'You do not have permission to edit this user'], 403);
+        return response()->json(['message' => 'You do not have access to edit the user'], 403);
     }
 
     public function getUserInfo(Request $request)
@@ -146,13 +120,12 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->role === 'admin') {
-            $users = User::where('id', '!=', $user->id)
-            ->get();
+        if ($user->isAdmin()) {
+            $users = User::where('id', '!=', $user->id)->get();
 
             return response()->json(['users' => $users], 200);
         }
-        if ($user->role === 'regional_admin') {
+        if ($user->isRegionalAdmin()) {
             $users = User::where('id', '!=', $user->id)
             ->where('country', $user->country)
             ->where('city', $user->city)

@@ -38,10 +38,10 @@ class CheckUserRole
         }
 
         if ($user->isRegionalAdmin()) {
-            // Проверка на регионального админа и доступ только к пользователям в его стране и городе.
-            // if ($this->checkRegionalPermissions($user, $request)) {
-            //     return $next($request);
-            // }
+            
+            if ($this->checkRegionalPermissions($user, $request)) {
+                return $next($request);
+            }
             return $next($request);
         }
 
