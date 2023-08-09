@@ -5,14 +5,19 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\UserCreateRequest;
+
 
 class UserController extends Controller
 {
 
-    public function add(Request $request)
+    public function __construct()
     {
-        $authenticatedUser = Auth::user();
+        $this->middleware('auth');
+    }
 
+    public function add(UserCreateRequest $request)
+    {
         $email = $request->only('email');
         $user = User::where('email', $email)->first();
 
@@ -36,11 +41,6 @@ class UserController extends Controller
     }
 
     public function delete(Request $request){
-        $authenticatedUser = Auth::user();
-
-        if ($authenticatedUser->role !== 'admin' && $authenticatedUser->role !== 'regional_admin') {
-            return response()->json(['message' => 'You do not have permission to perform this action'], 403);
-        }
 
         $user = User::find($request->id);
 
@@ -48,16 +48,16 @@ class UserController extends Controller
             return response()->json(['message' => 'User is not found'], 404);
         }
 
-        if ($authenticatedUser->role === 'regional_admin') {
+        // if ($authenticatedUser->role === 'regional_admin') {
 
-            if ($authenticatedUser->country !== $user->country) {
-                return response()->json(['message' => 'You can only add users in your country'], 403);
-            }
+        //     if ($authenticatedUser->country !== $user->country) {
+        //         return response()->json(['message' => 'You can only add users in your country'], 403);
+        //     }
 
-            if ($authenticatedUser->city !== $user->city) {
-                return response()->json(['message' => 'You can only add users in your city'], 403);
-            }
-        }
+        //     if ($authenticatedUser->city !== $user->city) {
+        //         return response()->json(['message' => 'You can only add users in your city'], 403);
+        //     }
+        // }
 
         $user->delete();
 
@@ -154,6 +154,7 @@ class UserController extends Controller
         }
         if ($user->role === 'regional_admin') {
             $users = User::where('id', '!=', $user->id)
+            ->where('country', $user->country)
             ->where('city', $user->city)
             ->get();
 

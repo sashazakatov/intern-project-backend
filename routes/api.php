@@ -7,24 +7,25 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\DeviceController;
 
-Route::prefix('/users')->middleware([ 'auth:api' ])->name('users.')->group(function(){
+Route::prefix('/users')->name('users.')->group(function(){
   
     //возрошает пользователей
     Route::get('/', [UserController::class, 'getUser'])
+    ->middleware([ 'auth:api' ])
     ->name('getUser');
 
     //создания пользователя
     Route::post('/create-user', [ UserController::class, 'add' ])
-    ->middleware([ 'CheckUserRole' ])
+    ->middleware([ 'auth:api', 'CheckUserRole' ])
     ->name('create-user');
 
     //удаления пользователя
-    Route::delete('delete-user', [ UserController::class, 'delete' ])
-    ->middleware([ 'auth:api' ])
+    Route::delete('/delete-user', [ UserController::class, 'delete' ])
+    ->middleware([ 'auth:api', 'CheckUserRole' ])
     ->name('delete-user');
 
     //обновление пользователя
-    Route::put('update-user-info', [ UserController::class, 'updateUserInfo' ])
+    Route::put('/update-user-info', [ UserController::class, 'updateUserInfo' ])
     ->middleware([ 'auth:api' ]);
 
     //обновление аватарки
@@ -55,14 +56,14 @@ Route::prefix('users/check-email')->name('users.')->group(function(){
 Route::get('/standard-avatars', [AvatarController::class, 'getStandardAvatars']);
 
 //Эндпоинты дивайсов
-Route::prefix('/devices')->middleware([ 'auth:api' ])->name('devices.')->group(function(){
+// Route::prefix('/devices')->middleware([ 'auth:api' ])->name('devices.')->group(function(){
 
-    //Создание дивайса
-    Route::post('/create', [DeviceController::class, 'create']);
+//     //Создание дивайса
+//     Route::post('/create', [DeviceController::class, 'create']);
 
-    //Редактирование дивайса
-    Route::put('/edit/{id}', [DeviceController::class, 'edit']);
+//     //Редактирование дивайса
+//     Route::put('/edit/{id}', [DeviceController::class, 'edit']);
 
-    //Удаление дивайса
-    Route::delete('/delete/{id}', [DeviceController::class, 'delete']);
-});
+//     //Удаление дивайса
+//     Route::delete('/delete/{id}', [DeviceController::class, 'delete']);
+// });
