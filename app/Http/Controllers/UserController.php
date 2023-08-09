@@ -29,7 +29,7 @@ class UserController extends Controller
         return response()->json(['user' => $user], 201);
     }
 
-    public function delete(UserIdRequest $request){
+    public function delete(Request $request){
 
         $user = User::find($request->id);
 
@@ -105,7 +105,7 @@ class UserController extends Controller
     public function checkEmail(Request $request){
         $email = $request->email;
         if(!$email){
-            return response()->json(['message' => 'Email is required'], 400);
+            return response()->json(['message' => 'bad request'], 400);
         }
 
         $user = User::where('email', $email)->first();
