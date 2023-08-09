@@ -14,10 +14,6 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Already exists'], 401);
-        }
-
         $user = User::create([
             'name' => $request->name,
             'surname' => $request->surname,
