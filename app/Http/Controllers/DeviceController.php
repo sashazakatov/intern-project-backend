@@ -9,5 +9,13 @@ use App\Models\Device;
 
 class DeviceController extends Controller
 {
-    //
+    public function create(){
+
+    }
+    public function edit(){
+
+    }
+    public function delete(){
+        
+    }
 }
