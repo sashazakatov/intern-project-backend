@@ -5,9 +5,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AvatarController;
+use App\Http\Controllers\DeviceController;
 
-Route::prefix('/users')->name('users.')->group(function(){
-
+Route::prefix('/users')->middleware([ 'auth:api' ])->name('users.')->group(function(){
+  
     //возрошает пользователей
     Route::get('/', [UserController::class, 'getUser'])
     ->name('getUser');
@@ -52,3 +53,16 @@ Route::prefix('users/check-email')->name('users.')->group(function(){
 
 //возвращает аватарки
 Route::get('/standard-avatars', [AvatarController::class, 'getStandardAvatars']);
+
+//Эндпоинты дивайсов
+Route::prefix('/devices')->middleware([ 'auth:api' ])->name('devices.')->group(function(){
+
+    //Создание дивайса
+    Route::post('/create', [DeviceController::class, 'create']);
+
+    //Редактирование дивайса
+    Route::put('/edit/{id}', [DeviceController::class, 'edit']);
+
+    //Удаление дивайса
+    Route::delete('/delete/{id}', [DeviceController::class, 'delete']);
+});
