@@ -3,16 +3,26 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+
+use App\Models\User;
+
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
+use App\Http\Requests\UserIdRequest;
 
 class UserController extends Controller
 {
 
     public function add(UserCreateRequest $request)
     {
+        $currentUser = Auth::user();
+
+        if($currentUser->isRegionalAdmin()){
+            if( $currentUser->country !== $request->country || $currentUser->city !== $request->city ){
+                return response()->json(['message' => 'bad request'], 400);
+            }
+        }
 
         $user = User::create([
             'name' => $request->name,
@@ -29,12 +39,19 @@ class UserController extends Controller
         return response()->json(['user' => $user], 201);
     }
 
-    public function delete(Request $request){
+    public function delete(UserIdRequest $request){
 
+        $currentUser = Auth::user();
         $user = User::find($request->id);
 
         if(!$user){
             return response()->json(['message' => 'User is not found'], 404);
+        }
+
+        if ($currentUser->isRegionalAdmin()) {
+            if ($currentUser->country !== $user->country || $currentUser->city !== $user->city) {
+                return response()->json(['message' => 'bad request'], 400);
+            }
         }
 
         $user->delete();
@@ -65,7 +82,7 @@ class UserController extends Controller
 
             return response()->json(["message" => "Data updated successfully", "user" => $user]);
         }
-        if (($currentUser->isDeviceOwner() || $currentUser->isCustomer()) && $currentUser->id === $user->id) {
+        if (($currentUser->isOwner() || $currentUser->isCustomer()) && $currentUser->id === $user->id) {
             $data = $request->only(['password', 'address', 'phone_number', 'avatar']);
             $user->update($data);
             
@@ -133,7 +150,5 @@ class UserController extends Controller
 
             return response()->json(['users' => $users], 200);
         }
-
-        return response()->json(['message' => 'Access denied'], 403);
     }
 }

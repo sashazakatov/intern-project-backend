@@ -46,8 +46,8 @@ class User extends Authenticatable
     public function isRegionalAdmin(){
         return $this->role === 'regional_admin';
     }
-    public function isDeviceOwner(){
-        return $this->role === 'device_owner';
+    public function isOwner(){
+        return $this->role === 'owner';
     }
     public function isCustomer(){
         return $this->role === 'customer';  

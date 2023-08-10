@@ -15,33 +15,10 @@ class CheckUserRole
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     
-    private function checkRegionalPermissions($user, $request)
-    {
-        $country = $request->input('country');
-        $city = $request->input('city');
-
-    
-        if ($country !== null && $city !== null) {
-            if ($user->country === $country && $user->city === $city) {
-                return true;
-            }
-        }
-    
-        return false;
-    }
-    
     public function handle(Request $request, Closure $next){
         $user = Auth::user();
 
-        if ($user->isAdmin()) {
-            return $next($request);
-        }
-
-        if ($user->isRegionalAdmin()) {
-            
-            if ($this->checkRegionalPermissions($user, $request)) {
-                return $next($request);
-            }
+        if ($user->isAdmin() || $user->isRegionalAdmin()) {
             return $next($request);
         }
 
