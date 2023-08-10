@@ -10,12 +10,12 @@ use App\Models\Device;
 class DeviceController extends Controller
 {
     public function create(Request $request){
-        
+      
     }
     public function edit(){
 
     }
     public function delete(){
-
+       
     }
 }
