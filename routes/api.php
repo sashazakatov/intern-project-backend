@@ -58,6 +58,11 @@ Route::get('/standard-avatars', [AvatarController::class, 'getStandardAvatars'])
 //Эндпоинты дивайсов
 Route::prefix('/devices')->name('devices.')->group(function(){
 
+    //Возрошает дивайсы
+    Route::get('/', [DeviceController::class, 'getDevices'])
+    ->middleware(['auth:api', 'CheckCustomerRole'])
+    ->name('get-device');
+
     //Создание дивайса
     Route::post('/create', [DeviceController::class, 'create'])
     ->middleware([ 'auth:api', 'CheckUserRole' ])
@@ -69,5 +74,7 @@ Route::prefix('/devices')->name('devices.')->group(function(){
     ->name('edit');
 
     //Удаление дивайса
-    Route::delete('/delete', [DeviceController::class, 'delete']);
+    Route::delete('/delete', [DeviceController::class, 'delete'])
+    ->middleware([ 'auth:api', 'CheckUserRole' ])
+    ->name('delete');
 });

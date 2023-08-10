@@ -92,4 +92,25 @@ class DeviceController extends Controller
 
         return response()->json(['message' => 'Device deleted successfully']);
     }
+
+    public function getDevices(Request $request)
+    {
+        $user = Auth::user();
+        
+        if ($user->role === 'customer') {
+            abort(403, 'Permission denied');
+        }
+        
+        if ($user->isAdmin()) {
+            $devices = Device::all();
+        } elseif ($user->isRegionalAdmin()) {
+            $devices = Device::where('administrator_id', $user->id)->get();
+        } elseif ($user->isOwner()) {
+            $devices = Device::where('owner_id', $user->id)->get();
+        } else {
+            abort(403, 'Permission denied');
+        }
+        
+        return response()->json([ 'devices' => $devices ]);
+    }
 }
