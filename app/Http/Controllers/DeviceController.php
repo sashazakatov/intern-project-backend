@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Device;
 
+use App\Http\Requests\UserIdRequest;
 use App\Http\Requests\DeviceAddRequest;
 
 
@@ -26,7 +27,7 @@ class DeviceController extends Controller
             if($currentUser->id !== $regionalAdmin->id){
                 return response()->json([ 'message' => 'fff' ]);
             }
-            if ($currentUser->city !== $owner->city || $currentUser->country !== $owner->country) {
+            if ($currentUser->city !== $request->city || $currentUser->country !== $request->country) {
                 return response()->json(['message' => 'You do not have permission to create a device for this owner'], 403);
             }
         } elseif ($currentUser->isAdmin()) {
@@ -40,11 +41,37 @@ class DeviceController extends Controller
     
         return response()->json(['message' => 'Device added successfully', 'device' => $device], 201);
     }
-    public function edit(){
+    public function edit(Request $request){
+        $currentUser = Auth::user();
 
-        return response()->json([ 'message' => 'it is edit device' ]);
+        $device = Device::find($request->id);
+
+        if (!$device) {
+            return response()->json(['message' => 'Device not found'], 404);
+        }
+
+        if (!$currentUser) {
+            return response()->json(['message' => 'User is not found'], 404);
+        }
+
+        $data = $request->only([
+            'serial_number', 'owner_id', 'administrator_id', 'name', 'device_type', 'phase_active',
+            'phase_type', 'sum_power', 'group_id', 'location', 'country', 'city','address'
+        ]);
+
+        if ($currentUser->id === $device->administrator_id) {
+
+            $device->update($data);
+
+            return response()->json(["message" => "Data updated successfully", "device" => $device]);
+        }
+        else if($currentUser->isAdmin()){
+            return response()->json(["message" => "Data updated successfully", "device" => $device]);
+        }
+
+        return response()->json(['message' => 'You do not have access to edit the device'], 403);
     }
-    public function delete(Request $request){
+    public function delete(UserIdRequest $request){
         $currentUser = Auth::user();
         $device = Device::find($request->id);
 
@@ -54,6 +81,9 @@ class DeviceController extends Controller
 
         if ($currentUser->isRegionalAdmin()) {
             if ($currentUser->id !== $device->administrator_id) {
+                return response()->json(['message' => 'bad request'], 400);
+            }
+            if($currentUser->city !== $device->city || $currentUser->country !== $device->country){
                 return response()->json(['message' => 'bad request'], 400);
             }
         }
