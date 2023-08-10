@@ -56,14 +56,18 @@ Route::prefix('users/check-email')->name('users.')->group(function(){
 Route::get('/standard-avatars', [AvatarController::class, 'getStandardAvatars']);
 
 //Эндпоинты дивайсов
-Route::prefix('/devices')->middleware([ 'auth:api' ])->name('devices.')->group(function(){
+Route::prefix('/devices')->name('devices.')->group(function(){
 
     //Создание дивайса
-    Route::post('/create', [DeviceController::class, 'create']);
+    Route::post('/create', [DeviceController::class, 'create'])
+    ->middleware([ 'auth:api', 'CheckUserRole' ])
+    ->name('create');
 
     //Редактирование дивайса
-    Route::put('/edit/{id}', [DeviceController::class, 'edit']);
+    Route::put('/edit', [DeviceController::class, 'edit'])
+    ->middleware([ 'auth:api', 'CheckUserRole' ])
+    ->name('edit');
 
     //Удаление дивайса
-    Route::delete('/delete/{id}', [DeviceController::class, 'delete']);
+    Route::delete('/delete', [DeviceController::class, 'delete']);
 });
