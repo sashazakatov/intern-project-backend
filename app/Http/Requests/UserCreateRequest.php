@@ -19,7 +19,8 @@ class UserCreateRequest extends FormRequest
             'country' => 'required|string|max:255',
             'city' => 'required|string|max:255',
             'address' => 'required|string|max:255',
-            'phone_number' => 'required|string|max:255'
+            'phone_number' => 'required|string|max:255',
+            'administrator_id' => 'nullable|integer',
         ];
     }
 
