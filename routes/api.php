@@ -11,7 +11,7 @@ Route::prefix('/users')->name('users.')->group(function(){
   
     //возрошает пользователей
     Route::get('/', [UserController::class, 'getUser'])
-    ->middleware([ 'auth:api' ])
+    ->middleware([ 'auth:api', 'CheckUserRole' ])
     ->name('getUser');
 
     //создания пользователя

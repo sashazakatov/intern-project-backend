@@ -5,16 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Http\Requests\UserCreateRequest;
+use App\Http\Requests\LoginRequest;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    public function register(UserCreateRequest $request)
     {
         $credentials = $request->only('email', 'password');
-
-        if (Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Already exists'], 401);
-        }
 
         $user = User::create([
             'name' => $request->name,
@@ -31,7 +29,7 @@ class AuthController extends Controller
         return response()->json( [ 'message' => 'Registration successful' ], 201 );
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
         $credentials = $request->only('email', 'password');
 
