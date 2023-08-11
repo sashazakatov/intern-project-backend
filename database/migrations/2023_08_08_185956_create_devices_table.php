@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('devices', function (Blueprint $table) {
             $table->id();
-            $table->string('serial_number')->unique();
+            $table->string('serial_number');
             $table->unsignedBigInteger('owner_id');
             $table->unsignedBigInteger('administrator_id');
             $table->string('name')->require();
@@ -23,14 +23,14 @@ return new class extends Migration
             $table->string('phase_type');
             $table->float('sum_power');
             $table->unsignedBigInteger('group_id')->nullable();
-            $table->text('location');
+            $table->text('location')->nullable();
             $table->string('country');
             $table->string('city');
             $table->string('address');
             $table->timestamps();
             
-            $table->foreign('owner_id')->references('id')->on('users'); // Пример внешнего ключа на пользователя
-            $table->foreign('administrator_id')->references('id')->on('users'); // Пример внешнего ключа на пользователя
+            $table->foreign('owner_id')->references('id')->on('users');
+            $table->foreign('administrator_id')->references('id')->on('users');
         });
     }
 
