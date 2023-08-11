@@ -15,8 +15,7 @@ class UserController extends Controller
 {
 
     public function add(UserCreateRequest $request)
-    {
-
+    {   
         $currentUser = Auth::user();
 
         if($request->role === 'owner'){
@@ -45,17 +44,6 @@ class UserController extends Controller
 
         $currentUser = Auth::user();
         $user = User::find($request->id);
-
-        if($request->role === 'owner'){
-            $regional_admin = User::where('id', $request->administrator_id)
-            ->where('city', $request->city)
-            ->where('country', $request->country)
-            ->first();
-
-            if (!$regional_admin) {
-                return response()->json(['message' => 'bad request'], 422);
-            }
-        }
 
         if(!$user){
             return response()->json(['message' => 'User is not found'], 404);
@@ -87,14 +75,29 @@ class UserController extends Controller
                 'name', 'surname', 'email', 'role', 'password', 
                 'country', 'city', 'address', 'phone_number', 'administrator_id'
             ]);
+            
+            if($request->administrator_id !== null && $user->role === 'owner') {
+                $regional_admin = User::where('id', $request->administrator_id)
+                ->where('city', $user->city)
+                ->where('country', $user->country)
+                ->first();
+
+                if (!$regional_admin) {
+                    return response()->json(['message' => 'bad request'], 422);
+                }
+            }
 
             $user->update($data);
 
             return response()->json(["message" => "Data updated successfully", "user" => $user]);
         }
-        if ($currentUser->isRegionalAdmin() && $currentUser->city === $user->city && $currentUser->country === $user->country) {
-
+        if ($currentUser->isRegionalAdmin() && $currentUser->city === $user->city && $currentUser->country === $user->country) {            
             $data = $request->only(['name', 'password', 'address', 'phone_number', 'avatar']);
+
+            if ($currentUser->id !== $user->administrator_id) {
+                return response()->json(['message' => 'bad request'], 422);
+            }  
+        
             $user->update($data);
 
             return response()->json(["message" => "Data updated successfully", "user" => $user]);
