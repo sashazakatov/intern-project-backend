@@ -18,23 +18,24 @@ class UserController extends Controller
     {
         $currentUser = Auth::user();
 
+        if($request->role === 'owner'){
+            $regional_admin = User::where('id', $request->administrator_id)
+            ->where('city', $request->city)
+            ->where('country', $request->country)
+            ->first();
+
+            if (!$regional_admin) {
+                return response()->json(['message' => 'bad request'], 422);
+            }
+        }
+
         if($currentUser->isRegionalAdmin()){
             if( $currentUser->country !== $request->country || $currentUser->city !== $request->city ){
                 return response()->json(['message' => 'bad request'], 400);
             }
         }
 
-        $user = User::create([
-            'name' => $request->name,
-            'surname' => $request->surname,
-            'email' => $request->email,
-            'role' => $request->role,
-            'password' => $request->password,
-            'country' => $request->country,
-            'city' => $request->city,
-            'address' => $request->address,
-            'phone_number' => $request->phone_number,
-        ]);
+        $user = User::create($request->all());
 
         return response()->json(['user' => $user], 201);
     }

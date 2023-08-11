@@ -21,6 +21,7 @@ class User extends Authenticatable
         'city',
         'address',
         'phone_number',
+        'administrator_id',
     ];
 
     protected $attributes = [
