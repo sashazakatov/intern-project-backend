@@ -97,10 +97,6 @@ class DeviceController extends Controller
     {
         $user = Auth::user();
         
-        if ($user->role === 'customer') {
-            abort(403, 'Permission denied');
-        }
-        
         if ($user->isAdmin()) {
             $devices = Device::all();
         } elseif ($user->isRegionalAdmin()) {
