@@ -50,6 +50,9 @@ class UserController extends Controller
         }
 
         if ($currentUser->isRegionalAdmin()) {
+            if($request->administrator_id !== $user->administrator_id) {
+                return response()->json(['message' => 'bad request'], 422);
+            }
             if ($currentUser->country !== $user->country || $currentUser->city !== $user->city) {
                 return response()->json(['message' => 'bad request'], 400);
             }
