@@ -14,18 +14,24 @@ use App\Http\Requests\UserIdRequest;
 class UserController extends Controller
 {
 
-    public function add(UserCreateRequest $request)
+public function add(UserCreateRequest $request)
     {   
         $currentUser = Auth::user();
 
         if($request->role === 'owner'){
-            $regional_admin = User::where('id', $request->administrator_id)
+            $regionalAdmin = User::where('id', $request->administrator_id)
+            ->where('role', 'regional_admin')
             ->where('city', $request->city)
-            ->where('country', $request->country)
-            ->first();
+            ->where('country', $request->country)->first();
 
-            if (!$regional_admin) {
+            if (!$regionalAdmin) {
                 return response()->json(['message' => 'bad request'], 422);
+            }
+        }
+
+        if($currentUser->isAdmin()){
+            if($request->role === 'admin'){
+                return response()->json(['message' => 'bad request'], 400); 
             }
         }
 
@@ -50,7 +56,7 @@ class UserController extends Controller
         }
 
         if ($currentUser->isRegionalAdmin()) {
-            if($request->administrator_id !== $user->administrator_id) {
+            if($currentUser->id !== $user->administrator_id) {
                 return response()->json(['message' => 'bad request'], 422);
             }
             if ($currentUser->country !== $user->country || $currentUser->city !== $user->city) {
@@ -81,9 +87,9 @@ class UserController extends Controller
             
             if($request->administrator_id !== null && $user->role === 'owner') {
                 $regional_admin = User::where('id', $request->administrator_id)
+                ->where('role', 'regional_admin')
                 ->where('city', $user->city)
-                ->where('country', $user->country)
-                ->first();
+                ->where('country', $user->country)->first();
 
                 if (!$regional_admin) {
                     return response()->json(['message' => 'bad request'], 422);
