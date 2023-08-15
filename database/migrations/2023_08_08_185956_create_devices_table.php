@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('devices', function (Blueprint $table) {
             $table->id();
-            $table->string('serial_number');
+            $table->string('serial_number')->unique();
             $table->unsignedBigInteger('owner_id');
             $table->unsignedBigInteger('administrator_id');
             $table->string('name')->require();
