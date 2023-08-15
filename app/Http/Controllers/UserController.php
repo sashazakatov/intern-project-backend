@@ -14,9 +14,26 @@ use App\Http\Requests\UserIdRequest;
 class UserController extends Controller
 {
 
-    public function add(UserCreateRequest $request)
-    {
+public function add(UserCreateRequest $request)
+    {   
         $currentUser = Auth::user();
+
+        if($request->role === 'owner'){
+            $regionalAdmin = User::where('id', $request->administrator_id)
+            ->where('role', 'regional_admin')
+            ->where('city', $request->city)
+            ->where('country', $request->country)->first();
+
+            if (!$regionalAdmin) {
+                return response()->json(['message' => 'bad request'], 422);
+            }
+        }
+
+        if($currentUser->isAdmin()){
+            if($request->role === 'admin'){
+                return response()->json(['message' => 'bad request'], 400); 
+            }
+        }
 
         if($currentUser->isRegionalAdmin()){
             if( $currentUser->country !== $request->country || $currentUser->city !== $request->city ){
@@ -24,17 +41,7 @@ class UserController extends Controller
             }
         }
 
-        $user = User::create([
-            'name' => $request->name,
-            'surname' => $request->surname,
-            'email' => $request->email,
-            'role' => $request->role,
-            'password' => $request->password,
-            'country' => $request->country,
-            'city' => $request->city,
-            'address' => $request->address,
-            'phone_number' => $request->phone_number,
-        ]);
+        $user = User::create($request->all());
 
         return response()->json(['user' => $user], 201);
     }
@@ -49,6 +56,9 @@ class UserController extends Controller
         }
 
         if ($currentUser->isRegionalAdmin()) {
+            if($currentUser->id !== $user->administrator_id) {
+                return response()->json(['message' => 'bad request'], 422);
+            }
             if ($currentUser->country !== $user->country || $currentUser->city !== $user->city) {
                 return response()->json(['message' => 'bad request'], 400);
             }
@@ -70,14 +80,33 @@ class UserController extends Controller
         }
 
         if ($currentUser->isAdmin()) {
-            $data = $request->only(['name', 'surname', 'email', 'role', 'password', 'country', 'city', 'address', 'phone_number']);
+            $data = $request->only([
+                'name', 'surname', 'email', 'role', 'password', 
+                'country', 'city', 'address', 'phone_number', 'administrator_id'
+            ]);
+            
+            if($request->administrator_id !== null && $user->role === 'owner') {
+                $regional_admin = User::where('id', $request->administrator_id)
+                ->where('role', 'regional_admin')
+                ->where('city', $user->city)
+                ->where('country', $user->country)->first();
+
+                if (!$regional_admin) {
+                    return response()->json(['message' => 'bad request'], 422);
+                }
+            }
+
             $user->update($data);
 
             return response()->json(["message" => "Data updated successfully", "user" => $user]);
         }
-        if ($currentUser->isRegionalAdmin() && $currentUser->city === $user->city && $currentUser->country === $user->country) {
-
+        if ($currentUser->isRegionalAdmin() && $currentUser->city === $user->city && $currentUser->country === $user->country) {            
             $data = $request->only(['name', 'password', 'address', 'phone_number', 'avatar']);
+
+            if ($currentUser->id !== $user->administrator_id) {
+                return response()->json(['message' => 'bad request'], 422);
+            }  
+        
             $user->update($data);
 
             return response()->json(["message" => "Data updated successfully", "user" => $user]);

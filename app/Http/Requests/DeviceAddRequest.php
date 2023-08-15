@@ -13,7 +13,7 @@ class DeviceAddRequest extends FormRequest
         return [
             'serial_number' => 'string|max:255',
             'owner_id' => 'required|exists:users,id',
-            'administrator_id' => 'required|exists:users,id',
+            'administrator_id' => 'exists:users,id',
             'name' => 'string|max:255',
             'device_type' => 'string|max:255',
             'phase_active' => 'boolean',
@@ -21,8 +21,6 @@ class DeviceAddRequest extends FormRequest
             'sum_power' => 'numeric',
             'group_id' => 'nullable',
             'location' => 'nullable|json',
-            'country' => 'string|max:255',
-            'city' => 'string|max:255',
             'address' => 'string|max:255',
         ];
     }

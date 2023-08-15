@@ -21,22 +21,27 @@ class DeviceController extends Controller
         if (!$owner->isOwner()) {
             return response()->json(['message' => 'You are not the owner'], 403);
         }
-    
+
         if ($currentUser->isRegionalAdmin()) {
-            $regionalAdmin = User::find($currentUser->id);
-            if($currentUser->id !== $regionalAdmin->id){
-                return response()->json([ 'message' => 'fff' ]);
-            }
-            if ($currentUser->city !== $request->city || $currentUser->country !== $request->country) {
+            if ($currentUser->city !== $owner->city || $currentUser->country !== $owner->country) {
                 return response()->json(['message' => 'You do not have permission to create a device for this owner'], 403);
             }
+
+            $request->merge([ 'administrator_id' => $currentUser->id ]);
+
         } elseif ($currentUser->isAdmin()) {
-            $regionalAdmin = User::find($currentUser->id);
+            $regionalAdmin = User::where('id', $request->administrator_id)
+            ->where('role', 'regional_admin')->first();
+        
+            if(!$regionalAdmin){
+                return response()->json(['message' => 'bad request'], 400);
+            }
             if ($regionalAdmin->city !== $owner->city || $regionalAdmin->country !== $owner->country) {
                 return response()->json(['message' => 'You do not have permission to create a device for this owner'], 403);
             }
         }
-    
+        
+        $request->merge([ 'city' => $currentUser->city, 'country' => $currentUser->country]);
         $device = Device::create($request->all());
     
         return response()->json(['message' => 'Device added successfully', 'device' => $device], 201);
@@ -50,16 +55,12 @@ class DeviceController extends Controller
             return response()->json(['message' => 'Device not found'], 404);
         }
 
-        if (!$currentUser) {
-            return response()->json(['message' => 'User is not found'], 404);
-        }
-
         $data = $request->only([
             'serial_number', 'owner_id', 'administrator_id', 'name', 'device_type', 'phase_active',
             'phase_type', 'sum_power', 'group_id', 'location', 'country', 'city','address'
         ]);
 
-        if ($currentUser->id === $device->administrator_id) {
+        if ($currentUser->id === $device->administrator_id && $currentUser->isRegionalAdmin()) {
 
             $device->update($data);
 
@@ -103,7 +104,7 @@ class DeviceController extends Controller
             $devices = Device::where('administrator_id', $user->id)->get();
         } elseif ($user->isOwner()) {
             $devices = Device::where('owner_id', $user->id)->get();
-        } else {
+        } elseif($user->isCustomer()) {
             abort(403, 'Permission denied');
         }
         
