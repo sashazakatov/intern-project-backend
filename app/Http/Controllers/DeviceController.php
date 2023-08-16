@@ -61,6 +61,9 @@ class DeviceController extends Controller
         ]);
 
         if ($currentUser->id === $device->administrator_id && $currentUser->isRegionalAdmin()) {
+            if($currentUser->city !== $device->city || $currentUser->country !== $device->country){
+                return response()->json(['message' => 'bad request'], 400);
+            }
 
             $device->update($data);
 

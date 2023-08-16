@@ -85,7 +85,7 @@ public function add(UserCreateRequest $request)
                 'country', 'city', 'address', 'phone_number', 'administrator_id'
             ]);
             
-            if($request->administrator_id !== null && $user->role === 'owner') {
+            if($user->role === 'owner') {
                 $regional_admin = User::where('id', $request->administrator_id)
                 ->where('role', 'regional_admin')
                 ->where('city', $user->city)
@@ -101,7 +101,7 @@ public function add(UserCreateRequest $request)
             return response()->json(["message" => "Data updated successfully", "user" => $user]);
         }
         if ($currentUser->isRegionalAdmin() && $currentUser->city === $user->city && $currentUser->country === $user->country) {            
-            $data = $request->only(['name', 'password', 'address', 'phone_number', 'avatar']);
+            $data = $request->only(['name', 'password', 'address', 'phone_number', 'avatar', 'surname']);
 
             if ($currentUser->id !== $user->administrator_id) {
                 return response()->json(['message' => 'bad request'], 422);
@@ -118,7 +118,7 @@ public function add(UserCreateRequest $request)
             return response()->json(["message" => "Data updated successfully", "user" => $user]);
         }
 
-        return response()->json(['message' => 'You do not have access to edit the user'], 403);
+        return response()->json(['message' => 'You do not have access to edit the user'], 422);
     }
 
     public function getUserInfo(Request $request)
