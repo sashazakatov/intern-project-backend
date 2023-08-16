@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class GroupDeviceController extends Controller
+class GroupController extends Controller
 {
     public function create(){
 
