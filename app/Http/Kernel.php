@@ -71,5 +71,6 @@ class Kernel extends HttpKernel
         'CheckUserRole' => \App\Http\Middleware\CheckUserRole::class,
         'CheckCustomerRole' => \App\Http\Middleware\CheckCustomerRole::class,
         'RegionalAdminMiddleware' => \App\Http\Middleware\RegionalAdminMiddleware::class,
+        'CheckGroupAccess' => \App\Http\Middleware\CheckGroupAccess::class,
     ];
 }

@@ -30,34 +30,15 @@ class GroupController extends Controller
         return response()->json(["groups" => $groups]);
     }
     public function delete(UserIdRequest $request){
-        $currentUser = Auth::user();
-        $groups = Group::where('id', $request->id)
-        ->first();
+        $groups = Group::where('id', $request->id)->first();
         
-        if(!$groups){
-            return response()->json(['message' => 'group not found'], 404);
-        }
-        if($groups->administrator_id === $currentUser->id){
-            return response()->json(['message' => 'you do not have access to it']);
-        }
-
         $groups->delete();
 
         return response()->json(['message' => 'group deleted successfully']);
     }
     public function edit(UserIdRequest $request){
-        $currentUser = Auth::user();
-        $groups = Group::where('id', $request->id)
-        ->first();
-
+        $groups = Group::where('id', $request->id)->first();
         $data = $request->only([ 'name' ]);
-
-        if(!$groups){
-            return response()->json(['message' => 'group not found'], 404);
-        }
-        if($groups->administrator_id !== $currentUser->id){
-            return response()->json(['message' => 'you do not have access to it']);
-        }
 
         $groups->update($data);
 

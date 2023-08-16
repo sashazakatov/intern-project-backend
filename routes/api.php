@@ -95,11 +95,11 @@ Route::prefix('/groups')->name('groups.')->group(function () {
 
     //удаление гпупп
     Route::delete('delete', [GroupController::class, 'delete'])
-    ->middleware([ 'auth:api', 'RegionalAdminMiddleware' ])
+    ->middleware([ 'auth:api', 'RegionalAdminMiddleware', 'CheckGroupAccess' ])
     ->name('delete');
     
     //обноелвение групп
     Route::put('edit', [GroupController::class, 'edit'])
-    ->middleware([ 'auth:api', 'RegionalAdminMiddleware' ])
+    ->middleware([ 'auth:api', 'RegionalAdminMiddleware', 'CheckGroupAccess' ])
     ->name('edit');
 });
