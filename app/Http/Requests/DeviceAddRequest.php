@@ -19,8 +19,8 @@ class DeviceAddRequest extends FormRequest
             'phase_active' => 'boolean',
             'phase_type' => 'string|max:255',
             'sum_power' => 'numeric',
-            'group_id' => 'nullable',
-            'location' => 'nullable|json',
+            'group_id' => 'required|integer|exists:groups,id',
+            'location' => 'required|string',
             'address' => 'string|max:255',
         ];
     }
