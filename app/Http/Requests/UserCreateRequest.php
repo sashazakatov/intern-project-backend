@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rule;
 
 class UserCreateRequest extends FormRequest
 {
@@ -14,7 +15,11 @@ class UserCreateRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'surname' => 'required|string|max:255',
-            'role' => 'required|string|max:255',
+            'role' => [
+                'required',
+                'string',
+                Rule::in(['admin', 'regional_admin', 'owner', 'customer']),
+            ],
             'password' => 'required|string|max:255',
             'country' => 'required|string|max:255',
             'city' => 'required|string|max:255',
