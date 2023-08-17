@@ -2,10 +2,12 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\DeviceController;
+use App\Http\Controllers\GroupController;
 
 Route::prefix('/users')->name('users.')->group(function(){
   
@@ -77,4 +79,27 @@ Route::prefix('/devices')->name('devices.')->group(function(){
     Route::delete('/delete', [DeviceController::class, 'delete'])
     ->middleware([ 'auth:api', 'CheckUserRole' ])
     ->name('delete');
+});
+
+Route::prefix('/groups')->name('groups.')->group(function () {
+
+    //возрощает группы
+    Route::get('', [GroupController::class, 'get'])
+    ->middleware([ 'auth:api', 'RegionalAdminMiddleware' ])
+    ->name('get');
+
+    // создания новой групу
+    Route::post('/create', [GroupController::class, 'create'])
+    ->middleware([ 'auth:api', 'RegionalAdminMiddleware' ])
+    ->name('create');
+
+    //удаление гпупп
+    Route::delete('delete', [GroupController::class, 'delete'])
+    ->middleware([ 'auth:api', 'RegionalAdminMiddleware', 'CheckGroupAccess' ])
+    ->name('delete');
+    
+    //обноелвение групп
+    Route::put('edit', [GroupController::class, 'edit'])
+    ->middleware([ 'auth:api', 'RegionalAdminMiddleware', 'CheckGroupAccess' ])
+    ->name('edit');
 });
