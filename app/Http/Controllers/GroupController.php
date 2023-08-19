@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Group;
+use App\Models\Device;
 use App\Http\Requests\UserIdRequest;
 use App\Http\Requests\GroupRequest;
 
@@ -31,7 +32,11 @@ class GroupController extends Controller
     }
     public function delete(UserIdRequest $request){
         $groups = Group::where('id', $request->id)->first();
-        
+ 
+        if (!Device::where('id', $groups->id)->first()) {
+            return response()->json(['message' => 'Group has devices'], 422);
+        }
+
         $groups->delete();
 
         return response()->json(['message' => 'group deleted successfully']);
