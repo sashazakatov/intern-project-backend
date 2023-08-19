@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 use App\Models\User;
+use App\Models\Device;
 
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
@@ -53,6 +54,16 @@ public function add(UserCreateRequest $request)
 
         if(!$user){
             return response()->json(['message' => 'User is not found'], 404);
+        }
+
+        if($user->isRegionalAdmin()){
+         if(User::where('administrator_id', $user->id)->first()){
+            return response()->json(['message' => 'The user has connections with other users'], 422);
+         }   
+        }
+
+        if(Device::where('owner_id', $user->id)->orWhere('administrator_id', $user->id)->first()){
+            return response()->json(['message' => 'User has related devices'], 422);
         }
 
         if ($currentUser->isRegionalAdmin()) {
