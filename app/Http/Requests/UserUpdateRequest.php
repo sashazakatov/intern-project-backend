@@ -17,7 +17,6 @@ class UserUpdateRequest  extends FormRequest
             'email' => 'email|unique:users,email',
             'surname' => 'string|max:255',
             'role' => [
-                'required',
                 'string',
                 Rule::in(['admin', 'regional_admin', 'owner', 'customer']),
             ],
