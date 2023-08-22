@@ -41,9 +41,9 @@ Route::prefix('/users')->name('users.')->group(function(){
     ->middleware([ 'auth:api' ]);
 });
 
-Route::prefix('/auth')->name('auth.')->group(function(){
+Route::prefix('/auth')->name()->group(function(){
 
-    //регистрация пользователя
+    //Ругистрация пользователя
     Route::post('/register', [AuthController::class, 'register' ])
     ->name('register');
 
