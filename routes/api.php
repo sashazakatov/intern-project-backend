@@ -32,8 +32,9 @@ Route::prefix('/users')->name('users.')->group(function(){
 
     //обновление аватарки
     Route::post('/update-avatar', [UserController::class, 'updateAvatar'])
-    ->middleware([ 'auth:api' ])
     ->name('update-avatar');
+
+    // ->middleware([ 'auth:api' ])
 
     //возрошает информацию о пользователе
     Route::get('/user-info', [ UserController::class, 'getUserInfo' ])

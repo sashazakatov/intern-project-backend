@@ -12,6 +12,8 @@ use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Requests\UserIdRequest;
 
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+
 class UserController extends Controller
 {
 
@@ -141,17 +143,16 @@ public function add(UserCreateRequest $request)
 
     public function updateAvatar(Request $request)
     {
-        $user = $request->user();
+        // $user = $request->user();
+        $user = User::where('id', 1);
 
         if ($request->hasFile('avatar')) {
-            $file = $request->file('avatar');
+            $avatarUrl = Cloudinary::upload($request->file('avatar')->getRealPath(), [
+                'folder' => 'storage/avatars',
+            ])
+            ->getSecurePath();
 
-            $filePath = $file->store('avatars', 'public');
-
-            $avatarUrl = asset('storage/' . $filePath);
-
-            $user->avatar = $avatarUrl;
-            $user->save();
+            $user->update(["avatar" => $avatarUrl]);
 
             return response()->json(['message' => 'Avatar uploaded successfully']);
         }

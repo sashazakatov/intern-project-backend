@@ -25,7 +25,7 @@ class User extends Authenticatable
     ];
 
     protected $attributes = [
-        'avatar' => 'http://intern-project-backend/storage/default_avatar/default_avatar.png',
+        'avatar' => 'https://res.cloudinary.com/dfevrvgy5/image/upload/v1692721932/storage/default_avatar/default_avatar_e3nlsv.png',
     ];
 
     protected $table = 'users';
