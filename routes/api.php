@@ -38,8 +38,11 @@ Route::prefix('/users')->name('users.')->group(function(){
     //возрошает информацию о пользователе
     Route::get('/user-info', [ UserController::class, 'getUserInfo' ])
     ->middleware([ 'auth:api' ]);
+});
 
-    //регистрация пользователя
+Route::prefix('/auth')->name()->group(function(){
+
+    //Ругистрация пользователя
     Route::post('/register', [AuthController::class, 'register' ])
     ->name('register');
 
