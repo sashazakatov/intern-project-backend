@@ -143,8 +143,7 @@ public function add(UserCreateRequest $request)
 
     public function updateAvatar(Request $request)
     {
-        // $user = $request->user();
-        $user = User::where('id', 1);
+        $user = $request->user();
 
         if ($request->hasFile('avatar')) {
             $avatarUrl = Cloudinary::upload($request->file('avatar')->getRealPath(), [
