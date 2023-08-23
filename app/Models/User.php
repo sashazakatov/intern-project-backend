@@ -20,6 +20,7 @@ class User extends Authenticatable
         'country',
         'city',
         'address',
+        'avatar',
         'phone_number',
         'administrator_id',
     ];
