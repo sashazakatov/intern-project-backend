@@ -95,7 +95,7 @@ public function add(UserCreateRequest $request)
         if ($currentUser->isAdmin()) {
             $data = $request->only([
                 'name', 'surname', 'email', 'role', 'password', 
-                'country', 'city', 'address', 'phone_number', 'administrator_id'
+                'country', 'city', 'address', 'phone_number', 'administrator_id', 'avatar',
             ]);
             
             if($user->role === 'owner') {
