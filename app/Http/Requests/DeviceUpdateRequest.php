@@ -12,15 +12,15 @@ class DeviceAddRequest extends FormRequest
     {
         return [
             'serial_number' => 'required|string|max:255|unique:devices,serial_number',
-            'owner_id' => 'required|exists:users,id',
+            'owner_id' => 'exists:users,id',
             'administrator_id' => 'exists:users,id',
             'name' => 'string|max:255',
             'device_type' => 'string|max:255',
             'phase_active' => 'boolean',
             'phase_type' => 'string|max:255',
             'sum_power' => 'numeric',
-            'group_id' => 'required|integer|exists:groups,id',
-            'location' => 'required|string',
+            'group_id' => 'integer|exists:groups,id',
+            'location' => 'string',
             'address' => 'string|max:255',
         ];
     }

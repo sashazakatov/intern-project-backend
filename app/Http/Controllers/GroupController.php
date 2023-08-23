@@ -33,7 +33,7 @@ class GroupController extends Controller
     public function delete(UserIdRequest $request){
         $groups = Group::where('id', $request->id)->first();
  
-        if (!Device::where('id', $groups->id)->first()) {
+        if (Device::where('group_id', $groups->id)->first()) {
             return response()->json(['message' => 'Group has devices'], 422);
         }
 

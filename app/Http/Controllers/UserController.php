@@ -98,7 +98,7 @@ public function add(UserCreateRequest $request)
                 'country', 'city', 'address', 'phone_number', 'administrator_id', 'avatar',
             ]);
             
-            if($user->role === 'owner') {
+            if($user->role === 'owner' && $request->administrator_id) {
                 $regional_admin = User::where('id', $request->administrator_id)
                 ->where('role', 'regional_admin')
                 ->where('city', $user->city)
@@ -116,7 +116,7 @@ public function add(UserCreateRequest $request)
         if ($currentUser->isRegionalAdmin() && $currentUser->city === $user->city && $currentUser->country === $user->country) {            
             $data = $request->only(['name', 'password', 'address', 'phone_number', 'avatar', 'surname']);
 
-            if ($currentUser->id !== $user->administrator_id) {
+            if ($currentUser->id !== $user->administrator_id && $user->administrator_id !== null) {
                 return response()->json(['message' => 'bad request'], 422);
             }  
         

@@ -9,6 +9,7 @@ use App\Models\Device;
 
 use App\Http\Requests\UserIdRequest;
 use App\Http\Requests\DeviceAddRequest;
+use App\Http\Requests\DeviceUpdateRequest;
 
 
 class DeviceController extends Controller
@@ -46,7 +47,7 @@ class DeviceController extends Controller
     
         return response()->json(['message' => 'Device added successfully', 'device' => $device], 201);
     }
-    public function edit(Request $request){
+    public function edit(DeviceUpdateRequest $request){
         $currentUser = Auth::user();
 
         $device = Device::find($request->id);
@@ -64,12 +65,35 @@ class DeviceController extends Controller
             if($currentUser->city !== $device->city || $currentUser->country !== $device->country){
                 return response()->json(['message' => 'bad request'], 400);
             }
+            if($request->administrator_id !== null){
+                $administrator= User::where('id', $request->administrator_id)
+                ->where('role', 'regional_admin')
+                ->where('city', $device->city)
+                ->where('country', $device->country)->first();
+            
+                if(!$administrator){
+                    return response()->json(['message' => 'bad request'], 400);
+                }
+            }
 
             $device->update($data);
 
             return response()->json(["message" => "Data updated successfully", "device" => $device]);
         }
         else if($currentUser->isAdmin()){
+            if($request->administrator_id !== null){
+                $administrator= User::where('id', $request->administrator_id)
+                ->where('role', 'regional_admin')
+                ->where('city', $device->city)
+                ->where('country', $device->country)->first();
+            
+                if(!$administrator){
+                    return response()->json(['message' => 'bad request'], 400);
+                }
+            }
+            
+            $device->update($data);
+
             return response()->json(["message" => "Data updated successfully", "device" => $device]);
         }
 
