@@ -14,17 +14,18 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        $user = User::create([
-            'name' => $request->name,
-            'surname' => $request->surname,
-            'email' => $request->email,
-            'role' => $request->role,
-            'password' => $request->password,
-            'country' => $request->country,
-            'city' => $request->city,
-            'address' => $request->address,
-            'phone_number' => $request->phone_number,
-        ]);
+        if($request->role === 'owner'){
+            $regionalAdmin = User::where('id', $request->administrator_id)
+            ->where('role', 'regional_admin')
+            ->where('city', $request->city)
+            ->where('country', $request->country)->first();
+
+            if (!$regionalAdmin) {
+                return response()->json(['message' => 'bad request'], 422);
+            }
+        }
+
+        $user = User::create($request->all());
 
         return response()->json( [ 'message' => 'Registration successful' ], 201 );
     }
