@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\ValidationException;
 
-class DeviceAddRequest extends FormRequest
+class DeviceUpdateRequest extends FormRequest
 {
     public function rules()
     {
