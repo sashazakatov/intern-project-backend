@@ -11,7 +11,8 @@ class DeviceUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'serial_number' => 'required|string|max:255|unique:devices,serial_number',
+            'id' => 'required|integer',
+            'serial_number' => 'string|max:255|unique:devices,serial_number',
             'owner_id' => 'exists:users,id',
             'administrator_id' => 'exists:users,id',
             'name' => 'string|max:255',

@@ -42,6 +42,9 @@ public function add(UserCreateRequest $request)
             if( $currentUser->country !== $request->country || $currentUser->city !== $request->city ){
                 return response()->json(['message' => 'bad request'], 400);
             }
+            if($request->role === 'admin'){
+                return response()->json(['message' => 'bad request'], 400);
+            }
         }
 
         $user = User::create($request->all());
