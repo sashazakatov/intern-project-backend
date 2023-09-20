@@ -22,7 +22,8 @@ class Device extends Model
         'location',
         'country',
         'city',
-        'address'
+        'address',
+        'owner_email'
     ];
 
     public function owner()

@@ -21,12 +21,12 @@ class DeviceAddRequest extends FormRequest
             'sum_power' => 'numeric',
             'group_id' => 'required|integer|exists:groups,id',
             'location' => 'required|string',
-            'address' => 'string|max:255',
+            'address' => 'string|max:255'
         ];
     }
 
     protected function failedValidation(Validator $validator)
     {
-        throw new ValidationException($validator, response()->json(['message' => 'bad request'], 400));
+        throw new ValidationException($validator, response()->json(['message' => 'bad request fff'], 400));
     }
 }

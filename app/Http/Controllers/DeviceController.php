@@ -23,6 +23,8 @@ class DeviceController extends Controller
             return response()->json(['message' => 'You are not the owner'], 403);
         }
 
+        $request->merge(['owner_email' => $owner->email]);
+
         if ($currentUser->isRegionalAdmin()) {
             if ($currentUser->city !== $owner->city || $currentUser->country !== $owner->country) {
                 return response()->json(['message' => 'You do not have permission to create a device for this owner'], 403);
