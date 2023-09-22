@@ -106,3 +106,16 @@ Route::prefix('/groups')->name('groups.')->group(function () {
     ->middleware([ 'auth:api', 'RegionalAdminMiddleware', 'CheckGroupAccess' ])
     ->name('edit');
 });
+
+Route::get('/test', function (Request $request) {
+    $push = PushNotification::setService('fcm')
+    ->setMessage([
+        'notification' => [
+            'title'=>'This is the title',
+            'body'=>'This is the message',
+            'sound' => 'default'
+        ]
+    ])->send();
+
+    return response()->json(["ffff" => $push]);
+});

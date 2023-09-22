@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\LoginRequest;
+use Edujugon\PushNotification\Facades\PushNotification;
 
 class AuthController extends Controller
 {
@@ -41,6 +42,21 @@ class AuthController extends Controller
         $user = Auth::user();
         $accessToken = $user->createToken('authToken')->accessToken;
         $refreshToken = $user->createToken('authToken', [''])->accessToken;
+            
+        if($request->devices_token) {
+        	$push = PushNotification::setService('fcm')
+    		->setMessage([
+        		'notification' => [
+            		'title'=>'APP',
+            		'body'=>'Successful login from',
+            		'sound' => 'default'
+        		]
+    		])
+    		->setDevicesToken($request->devices_token)
+    		->send()->getFeedback();
+                
+        	return response()->json(["ffff" => $push]);
+    	}
 
         return response()->json([ 
             'message' => 'Login successful', 
